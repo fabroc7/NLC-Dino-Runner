@@ -18,8 +18,6 @@ class Game:
         self.game_speed = 10
         self.player = Dinosaur()
         self.obstacle_manager = ObstaclesManager()
-        # self.cactusSmall = Cactus(SMALL_CACTUS)
-        # self.cactusLarge = Cactus(LARGE_CACTUS)
 
     def run(self):
         self.playing = True
