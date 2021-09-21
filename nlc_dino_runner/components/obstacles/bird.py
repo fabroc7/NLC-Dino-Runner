@@ -2,12 +2,13 @@
 import random
 
 from nlc_dino_runner.components.obstacles.obstacles import Obstacles
+from nlc_dino_runner.utils.constants import BIRD
 
 
 class Bird(Obstacles):
-    def __init__(self, image):
+    def __init__(self):
         self.type = 0
-        super().__init__(image, self.type)
+        super().__init__(BIRD, self.type)
         self.rect.y = 250
         self.index = 0
 

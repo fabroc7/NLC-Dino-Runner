@@ -9,5 +9,4 @@ class Cactus(Obstacles):
     def __init__(self, image, rect_y):
         self.type = random.randint(0, 2)
         super().__init__(image, self.type)
-        self.rect.y = 315
         self.rect.y = rect_y
