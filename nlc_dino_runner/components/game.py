@@ -29,10 +29,10 @@ class Game:
 
     def run(self):
         # Game loop: events - update - draw
-        self.obstacle_manager.reset_obstacles()
-        self.power_up_manager.reset_power_ups(self.points)
-        self.life_manager.refull_lifes()
         self.points = 0
+        self.obstacle_manager.reset_obstacles()
+        self.power_up_manager.reset_power_ups(self.points, self.player)
+        self.life_manager.refull_lifes()
         self.game_speed = 20
         self.playing = True
         while self.playing:
@@ -43,7 +43,11 @@ class Game:
     def event(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self.running = False
                 self.playing = False
+                pygame.display.quit()
+                pygame.quit()
+                exit()
 
     def update(self):
         user_input = pygame.key.get_pressed()
@@ -56,9 +60,9 @@ class Game:
         self.screen.fill((255, 255, 255))
         self.score()
         self.draw_background()
+        self.power_up_manager.draw(self.screen)
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
-        self.power_up_manager.draw(self.screen)
         self.life_manager.draw(self.screen)
 
         pygame.display.update()
