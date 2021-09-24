@@ -15,10 +15,10 @@ class Bird(Obstacles):
     def draw(self, screen):
         if self.index > 5:
             self.rect.y = self.initial_pos_y - 14
-            screen.blit(self.image[1], self.rect)
+            screen.blit(self.image[self.mode][1], self.rect)
         else:
             self.rect.y = self.initial_pos_y
-            screen.blit(self.image[0], self.rect)
+            screen.blit(self.image[self.mode][0], self.rect)
         if self.index >= 9:
             self.index = 0
         self.index += 1

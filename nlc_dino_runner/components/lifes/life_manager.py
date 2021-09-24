@@ -11,6 +11,10 @@ class LifeManager:
             self.life_list.append(Life(pos_x))
             pos_x += 30
 
+    def update(self, mode):
+        for life in self.life_list:
+            life.update(mode)
+
     def draw(self, screen):
         for life in self.life_list:
             life.draw(screen)

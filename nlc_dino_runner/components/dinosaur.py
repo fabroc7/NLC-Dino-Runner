@@ -12,7 +12,7 @@ from nlc_dino_runner.utils.constants import (
     HAMMER_TYPE,
     RUNNING_HAMMER,
     JUMPING_HAMMER,
-    DUCKING_HAMMER
+    DUCKING_HAMMER, LIGHT_MODE
 )
 from nlc_dino_runner.utils.text_utils import get_centered_message
 
@@ -24,11 +24,12 @@ class Dinosaur(Sprite):
     JUMP_VEL = 8.5
 
     def __init__(self):
+        self.mode = LIGHT_MODE
         self.run_img = {DEFAULT_TYPE: RUNNING, SHIELD_TYPE: RUNNING_SHIELD, HAMMER_TYPE: RUNNING_HAMMER}
         self.jump_img = {DEFAULT_TYPE: JUMPING, SHIELD_TYPE: JUMPING_SHIELD, HAMMER_TYPE: JUMPING_HAMMER}
         self.duck_img = {DEFAULT_TYPE: DUCKING, SHIELD_TYPE: DUCKING_SHIELD, HAMMER_TYPE: DUCKING_HAMMER}
         self.type = DEFAULT_TYPE
-        self.image = self.run_img[self.type][0]
+        self.image = self.run_img[self.type][self.mode][0]
 
         self.shield = False # banderita para decir si el shield está habilitado o no
         self.shield_time_up = 0
@@ -46,7 +47,9 @@ class Dinosaur(Sprite):
         self.dino_jump = False
         self.jump_vel = self.JUMP_VEL
 
-    def update(self, user_input):
+    def update(self, user_input, mode):
+        self.mode = mode
+
         if self.dino_jump:
             self.jump()
         if self.dino_duck:
@@ -71,21 +74,21 @@ class Dinosaur(Sprite):
             self.step_index = 0
 
     def run(self):
-        self.image = self.run_img[self.type][self.step_index // 5]
+        self.image = self.run_img[self.type][self.mode][self.step_index // 5]
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS
         self.step_index += 1
 
     def duck(self):
-        self.image = self.duck_img[self.type][self.step_index // 5]
+        self.image = self.duck_img[self.type][self.mode][self.step_index // 5]
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS_DUCK
         self.step_index += 1
 
     def jump(self):
-        self.image = self.jump_img[self.type]
+        self.image = self.jump_img[self.type][self.mode]
         if self.dino_jump:
             self.dino_rect.y -= self.jump_vel * 4
             self.jump_vel -= 1
@@ -104,12 +107,14 @@ class Dinosaur(Sprite):
                 if self.type == SHIELD_TYPE:
                     self.type = DEFAULT_TYPE
             else:
+                color = (0, 0, 0) if self.mode == LIGHT_MODE else (255, 255, 255)
                 if self.show_text:
                     text, text_rect = get_centered_message(
                         f'Shield enabled for {time_to_show}',
                         width=500,
                         height=40,
-                        size=20
+                        size=20,
+                        color=color
                     )
                     screen.blit(text, text_rect)
 

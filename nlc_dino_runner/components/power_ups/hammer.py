@@ -8,6 +8,8 @@ class Hammer(PowerUp):
         self.image = HAMMER
         self.type = HAMMER_TYPE
         self.hammers_left = 0
+        self.count_hammers = False
+        self.hammers_pos = [(25, 60), (65, 60), (105, 60)]
         super().__init__(self.image, self.type)
 
     def set_pos_hammer(self, dino_rect):
@@ -20,5 +22,13 @@ class Hammer(PowerUp):
             self.rect.x = -200
             powerup.throwing_hammer = False
 
-    def draw_hammer(self, screen):
-        screen.blit(self.image, self.rect)
+    def draw_hammer(self, screen, mode):
+        screen.blit(self.image[mode], self.rect)
+
+    def draw_left_hammers(self, screen, mode):
+        counter = 0
+        for pos_hammer in self.hammers_pos:
+            if counter < self.hammers_left:
+                screen.blit(self.image[mode], pos_hammer)
+            counter += 1
+

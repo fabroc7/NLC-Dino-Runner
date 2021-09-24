@@ -3,7 +3,8 @@ import pygame
 
 from nlc_dino_runner.components.power_ups.hammer import Hammer
 from nlc_dino_runner.components.power_ups.shield import Shield
-from nlc_dino_runner.utils.constants import SHIELD_TYPE, DEFAULT_TYPE, HAMMER_TYPE
+from nlc_dino_runner.utils.constants import SHIELD_TYPE, DEFAULT_TYPE, HAMMER_TYPE, SOUND_SHIELD, SOUND_HAMMER, \
+    LIGHT_MODE
 
 
 class PowerUpManager:
@@ -14,11 +15,13 @@ class PowerUpManager:
         self.points = 0
         self.throwing_hammer = False
         self.hammer = Hammer()
+        self.mode = LIGHT_MODE
 
     def reset_power_ups(self, points, player):
         self.power_ups = []
         self.points = points
         self.when_appears = random.randint(200, 300) + self.points
+        self.hammer.hammers_left = 0
         player.hammer = False
         player.type = DEFAULT_TYPE
 
@@ -30,11 +33,12 @@ class PowerUpManager:
                 if player.type == DEFAULT_TYPE:
                     self.power_ups.append(random.choice([Shield(), Hammer()]))
 
-    def update(self, points, game_speed, player):
+    def update(self, points, game_speed, player, mode):
         self.generate_power_ups(points, player)
+        self.mode = mode
 
         for power_up in self.power_ups:
-            power_up.update(game_speed, self.power_ups)
+            power_up.update(game_speed, self.power_ups, self.mode)
             if player.dino_rect.colliderect(power_up.rect):
                 player.type = power_up.type
                 power_up.start_time = pygame.time.get_ticks()
@@ -43,11 +47,14 @@ class PowerUpManager:
 
                 if player.type == SHIELD_TYPE:
                     player.shield = True
+                    SOUND_SHIELD.play()
                     player.show_text = True
                     player.shield_time_up = power_up.start_time + (time_random * 1000)
 
                 if player.type == HAMMER_TYPE:
+                    self.hammer.count_hammers = True
                     player.hammer = True
+                    SOUND_HAMMER.play()
                     self.hammer.hammers_left = 3
 
         user_input = pygame.key.get_pressed()
@@ -68,4 +75,7 @@ class PowerUpManager:
             power_up.draw(screen)
 
         if self.throwing_hammer:
-            self.hammer.draw_hammer(screen)
+            self.hammer.draw_hammer(screen, self.mode)
+
+        if self.hammer.hammers_left > 0:
+            self.hammer.draw_left_hammers(screen, self.mode)
